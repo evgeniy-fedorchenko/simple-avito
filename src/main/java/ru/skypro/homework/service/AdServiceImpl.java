@@ -11,8 +11,8 @@ import ru.skypro.homework.dto.ExtendedAd;
 public class AdServiceImpl implements AdService {
 
     @Override
-    public void getAllAds() {
-
+    public Ads getAllAds() {
+        return new Ads();
     }
 
     @Override

@@ -22,8 +22,7 @@ public class AdController {
 
     @GetMapping
     public ResponseEntity<Ads> getAds() {
-        adService.getAllAds();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(adService.getAllAds());
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -57,7 +56,7 @@ public class AdController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE   // Сомнительно, но окэй
     )
-    public ResponseEntity<byte[]> updateImage(@PathVariable int id, @RequestPart("image") MultipartFile image) {
+    public ResponseEntity<byte[]> updateImage(@PathVariable int id, @RequestPart MultipartFile image) {
         return ResponseEntity.ok(adService.updateImage(id, image));   // Заголовки также не прописаны
     }
 
@@ -70,7 +69,7 @@ public class AdController {
 
     @PostMapping(path = "/{id}/comments")
     public ResponseEntity<Comment> addComment(@PathVariable int id,
-                                               @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment) {
+                                              @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment) {
         return ResponseEntity.ok(commentService.addComment(id, createOrUpdateComment));
     }
 

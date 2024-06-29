@@ -8,7 +8,7 @@ import ru.skypro.homework.dto.ExtendedAd;
 
 public interface AdService {
 
-    void getAllAds();
+    Ads getAllAds();
 
     Ad addAd(CreateOrUpdateAd properties, MultipartFile image);
 
