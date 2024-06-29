@@ -57,7 +57,7 @@ public class AdController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE   // Сомнительно, но окэй
     )
-    public ResponseEntity<byte[]> updateImage(@PathVariable int id, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<byte[]> updateImage(@PathVariable int id, @RequestPart("image") MultipartFile image) {
         return ResponseEntity.ok(adService.updateImage(id, image));   // Заголовки также не прописаны
     }
 
