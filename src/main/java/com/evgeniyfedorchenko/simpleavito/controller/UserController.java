@@ -1,0 +1,45 @@
+package com.evgeniyfedorchenko.simpleavito.controller;
+
+import com.evgeniyfedorchenko.simpleavito.dto.NewPassword;
+import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
+import com.evgeniyfedorchenko.simpleavito.service.UserService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+@Validated
+@RestController
+@RequestMapping(path = "/users")
+@AllArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @PostMapping(path = "/set_password")
+    public ResponseEntity<Void> setPassword(@RequestBody @Valid NewPassword newPassword) {
+        userService.setPassword(newPassword);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path = "/me")
+    public ResponseEntity<Void> getUser() {
+        userService.getUser();
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping(path = "/me")
+    public ResponseEntity<UpdateUser> updateUser(@RequestBody @Valid UpdateUser updateUser) {
+        return ResponseEntity.ok(userService.updateUser(updateUser));
+    }
+
+    @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateUserImage(@RequestPart MultipartFile image) {
+        userService.updateUserImage(image);
+        return ResponseEntity.ok().build();
+    }
+
+}
