@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment updateComment(int adId, int commentId) {
+    public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
         return new Comment();
     }
 }

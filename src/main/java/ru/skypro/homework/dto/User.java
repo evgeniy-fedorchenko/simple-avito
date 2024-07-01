@@ -1,7 +1,6 @@
 package ru.skypro.homework.dto;
 
-
-import lombok.*;
+import lombok.Data;
 
 @Data
 public class User {

@@ -40,14 +40,14 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers("/ads/**", "/users/**").authenticated())
                 .cors(AbstractHttpConfigurer::disable)
-                .httpBasic(withDefaults());
-        return http.build();
+                .httpBasic(withDefaults())
+                .build();
     }
 
     @Bean

@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PatchMapping(path = "/me")
-    public ResponseEntity<UpdateUser> getUser(@RequestBody @Valid UpdateUser updateUser) {
+    public ResponseEntity<UpdateUser> updateUser(@RequestBody @Valid UpdateUser updateUser) {
         return ResponseEntity.ok(userService.updateUser(updateUser));
     }
 

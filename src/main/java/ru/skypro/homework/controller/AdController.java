@@ -26,7 +26,7 @@ public class AdController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Ad> addAd(@RequestBody @Valid CreateOrUpdateAd properties, @RequestBody MultipartFile image) {
+    public ResponseEntity<Ad> addAd(@RequestBody @Valid CreateOrUpdateAd properties, @RequestPart MultipartFile image) {
         return ResponseEntity.ok(adService.addAd(properties, image));
     }
 
@@ -80,8 +80,10 @@ public class AdController {
     }
 
     @PostMapping(path = "/{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable int adId, @PathVariable int commentId) {
-        return ResponseEntity.ok(commentService.updateComment(adId, commentId));
+    public ResponseEntity<Comment> updateComment(@PathVariable int adId,
+                                                 @PathVariable int commentId,
+                                                 @RequestBody @Valid CreateOrUpdateComment comment) {
+        return ResponseEntity.ok(commentService.updateComment(adId, commentId, comment));
 
     }
 }
