@@ -13,10 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = UserController.BASE_USER_URI)
 @AllArgsConstructor
 public class UserController {
 
+    public static final String BASE_USER_URI = "/users";
+    public static final String IMAGE_PATH_SEGMENT = "image";
     private final UserService userService;
 
     @PostMapping(path = "/set_password")

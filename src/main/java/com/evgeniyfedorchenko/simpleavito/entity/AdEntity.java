@@ -1,11 +1,14 @@
 package com.evgeniyfedorchenko.simpleavito.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,9 +29,15 @@ public class AdEntity {
     @JoinColumn(name = "user_id")
     private UserEntity author;
 
+    @Nullable
+    @OneToMany(mappedBy = "adEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<CommentEntity> comments;
+
     @Lob
     @Column(columnDefinition = "oid")
     private byte[] image;
+
+    private String mediaType;
 
     @NotNull
     @Min(0)
@@ -43,7 +52,7 @@ public class AdEntity {
     private String description;
 
     public boolean hasImage() {
-        return image != null && image.length > 0;
+        return image != null && image.length > 0 && mediaType != null;
     }
 
     public boolean hasDescription() {

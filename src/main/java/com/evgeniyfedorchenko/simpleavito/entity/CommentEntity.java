@@ -1,5 +1,6 @@
 package com.evgeniyfedorchenko.simpleavito.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,15 +26,21 @@ public class CommentEntity {
     @JoinColumn(name = "user_id")
     private UserEntity author;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "ad_id")
+    private AdEntity adEntity;
+
     /*
      * Комментарий по поводу типа данных java.sql.Timestamp
      *
      * Мне нравится пользоваться аннотацией org.hibernate.annotations.CreationTimestamp - она автоматически ставит
      * текущее время в это поле, когда сущность впервые сохраняется в бд и не надо вводить его руками.
      * Но @CreationTimestamp предназначена для работы с типами, представляющими дату и время в определенной
-     * временной зоне. А я думаю, нам тут нужна метка на временной шкале (раз уж dto просит кол-во миллисекунд).
-     * Конечно можно было бы сделать поле типа LocalDateTime и просто конвертировать, но вот так, как я предлагаю,
-     * будет короче. (Полный путь до покета оставил для ясности)
+     * временной зоне, она не сработает с Instant. А я думаю, нам тут нужна именно метка на временной шкале (раз уж
+     * dto просит кол-во миллисекунд). Конечно можно перегнать условный LocalDateTime в Instant например, но это
+     * не прям напрямую конвертируется. А вот так, как я предлагаю и конвертируется напрямую без аргументов и с этой
+     * аннотацией работает. (Полный путь до покета оставил для ясности)
      */
     @NotNull
     @CreationTimestamp

@@ -1,6 +1,7 @@
 package com.evgeniyfedorchenko.simpleavito.entity;
 
 import com.evgeniyfedorchenko.simpleavito.dto.Role;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ public class UserEntity {
     @EqualsAndHashCode.Include
     private int id;
 
+    @NotNull
     @Email
     private String email;
 
@@ -40,11 +42,13 @@ public class UserEntity {
     @NotNull
     private Role role;
 
+    @Nullable
     @Lob
     @Column(columnDefinition = "oid")
     private byte[] image;
 
-    public boolean hasEmail() {
-        return email != null;
+
+    public boolean hasImage() {
+        return image != null && (image.length > 0);
     }
 }
