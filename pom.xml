@@ -11,7 +11,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>ru.skypro</groupId>
+    <groupId>com.evegeniyfedorchenko</groupId>
     <artifactId>simple-avito</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Ads application</name>
