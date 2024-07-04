@@ -19,17 +19,12 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private int id;
+    private long id;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity author;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "ad_id")
-    private AdEntity adEntity;
 
     /*
      * Комментарий по поводу типа данных java.sql.Timestamp

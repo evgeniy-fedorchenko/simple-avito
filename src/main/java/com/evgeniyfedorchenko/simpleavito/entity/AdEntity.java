@@ -8,13 +8,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString
+@ToString // todo переопределить везде
 @Entity
 @Table(name = "ads")
 public class AdEntity {
@@ -29,14 +30,11 @@ public class AdEntity {
     @JoinColumn(name = "user_id")
     private UserEntity author;
 
-    @Nullable
-    @OneToMany(mappedBy = "adEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<CommentEntity> comments;
-
     @Lob
     @Column(columnDefinition = "oid")
     private byte[] image;
 
+    @Size(min = 5, max = 25)
     private String mediaType;
 
     @NotNull
@@ -50,6 +48,11 @@ public class AdEntity {
 
     @Size(min = 8, max = 64)
     private String description;
+
+    @Nullable
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ads_id")
+    private List<CommentEntity> comments = new ArrayList<>();
 
     public boolean hasImage() {
         return image != null && image.length > 0 && mediaType != null;
