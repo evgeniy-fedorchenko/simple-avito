@@ -64,7 +64,7 @@ public class UserEntity {
 
     /**
      * Метод добавляет переданный в параметре объект в коллекцию {@code this.ads}, а так же устанавливает
-     * объект {@code this} в поле {@link AdEntity#author} у переданного экземпляра {@code AdEntity ad}
+     * объект {@code this} в поле {@link AdEntity#getAuthor()} у переданного экземпляра {@code AdEntity ad}
      * Добавление происходит локально, необходимо обновление в базе данных
      * @param ad объект, который нужно добавить в коллекцию {@code this.ads}
      * @return объект {@link UserEntity} с обновленной коллекцией <b>ads</b>, в которую локально добавлен
@@ -78,7 +78,7 @@ public class UserEntity {
 
     /**
      * Метод удаляет переданный в параметре объект из коллекции {@code this.ads}, а так же устанавливает
-     * {@code null} в поле {@link AdEntity#author} у переданного экземпляра класса {@code AdEntity ad}
+     * {@code null} в поле {@link AdEntity#getAuthor()} у переданного экземпляра класса {@code AdEntity ad}
      * Удаление происходит локально, необходимо обновление в базе данных
      * @param ad объект, который нужно удалить из коллекции {@code this.ads}
      * @return объект {@link UserEntity} с обновленной коллекцией <b>ads</b>, из которой локально удален

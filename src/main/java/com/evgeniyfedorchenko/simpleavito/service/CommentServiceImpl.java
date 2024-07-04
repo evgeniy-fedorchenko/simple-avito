@@ -1,13 +1,12 @@
 package com.evgeniyfedorchenko.simpleavito.service;
 
+import com.evgeniyfedorchenko.simpleavito.dto.Comment;
 import com.evgeniyfedorchenko.simpleavito.dto.Comments;
-import com.evgeniyfedorchenko.simpleavito.entity.AdEntity;
+import com.evgeniyfedorchenko.simpleavito.dto.CreateOrUpdateComment;
 import com.evgeniyfedorchenko.simpleavito.repository.AdRepository;
 import com.evgeniyfedorchenko.simpleavito.repository.CommentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.evgeniyfedorchenko.simpleavito.dto.Comment;
-import com.evgeniyfedorchenko.simpleavito.dto.CreateOrUpdateComment;
 
 import java.util.Optional;
 
