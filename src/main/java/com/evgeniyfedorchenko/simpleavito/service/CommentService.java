@@ -4,13 +4,15 @@ import com.evgeniyfedorchenko.simpleavito.dto.Comments;
 import com.evgeniyfedorchenko.simpleavito.dto.Comment;
 import com.evgeniyfedorchenko.simpleavito.dto.CreateOrUpdateComment;
 
+import java.util.Optional;
+
 public interface CommentService {
 
-    Comments getComments(int id);
+    Optional<Comments> getComments(long adId);
 
-    Comment addComment(int id, CreateOrUpdateComment createOrUpdateComment);
+    Comment addComment(long id, CreateOrUpdateComment createOrUpdateComment);
 
-    void deleteComment(int adId, int commentId);
+    void deleteComment(long adId, long commentId);
 
-    Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment);
+    Comment updateComment(long adId, long commentId, CreateOrUpdateComment comment);
 }

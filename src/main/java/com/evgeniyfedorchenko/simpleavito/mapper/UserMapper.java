@@ -27,7 +27,7 @@ public class UserMapper {
         return user;
     }
 
-    protected String generateImageUrl(int id) {
+    protected String generateImageUrl(long id) {
 
         return UriComponentsBuilder.newInstance()
                 .scheme("http")

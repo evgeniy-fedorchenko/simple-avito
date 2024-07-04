@@ -2,23 +2,27 @@ package com.evgeniyfedorchenko.simpleavito.service;
 
 import com.evgeniyfedorchenko.simpleavito.dto.Ad;
 import com.evgeniyfedorchenko.simpleavito.dto.ExtendedAd;
+import org.springframework.data.util.Pair;
+import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import com.evgeniyfedorchenko.simpleavito.dto.Ads;
 import com.evgeniyfedorchenko.simpleavito.dto.CreateOrUpdateAd;
+
+import java.util.Optional;
 
 public interface AdService {
 
     Ads getAllAds();
 
-    Ad addAd(CreateOrUpdateAd properties, MultipartFile image);
+    Ad addAd(CreateOrUpdateAd properties, MultipartFile image, String username);
 
-    ExtendedAd getAds(int id);
+    Optional<ExtendedAd> getAds(long id);
 
-    void removeAd(int id);
+    boolean removeAd(long id);
 
-    Ad updateAds(int id, CreateOrUpdateAd createOrUpdateAd);
+    Optional<Ad> updateAds(long id, CreateOrUpdateAd createOrUpdateAd);
 
-    Ads getAdsMe();
+    Optional<Ads> getAdsMe(String name);
 
-    byte[] updateImage(int id, MultipartFile image);
+    Optional<Pair<byte[], MediaType>> updateImage(long id, MultipartFile image);
 }

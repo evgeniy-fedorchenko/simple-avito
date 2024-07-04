@@ -1,21 +1,14 @@
 package com.evgeniyfedorchenko.simpleavito.mapper;
 
-import com.evgeniyfedorchenko.simpleavito.dto.Ads;
 import com.evgeniyfedorchenko.simpleavito.dto.Comment;
 import com.evgeniyfedorchenko.simpleavito.dto.Comments;
-import com.evgeniyfedorchenko.simpleavito.entity.AdEntity;
 import com.evgeniyfedorchenko.simpleavito.entity.CommentEntity;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -46,7 +39,6 @@ public class CommentMapper {
         LocalDateTime now = LocalDateTime.now();
         now.toInstant(ZoneOffset.MAX);
 
-        java.sql.Timestamp a = new Timestamp(1212121);
         return comments;
     }
 }

@@ -30,7 +30,7 @@ public class AdMapper {
         return ad;
     }
 
-    public Ads toDto(List<AdEntity> adEntities) {
+    public Ads toDtos(List<AdEntity> adEntities) {
         Ads ads = new Ads();
 
         ads.setCount(adEntities.size());
@@ -56,7 +56,7 @@ public class AdMapper {
         return extendedAd;
     }
 
-    private String generateImageUrl(int id) {
+    private String generateImageUrl(long id) {
 
         return UriComponentsBuilder.newInstance()
                 .scheme("http")
