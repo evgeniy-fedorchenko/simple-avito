@@ -59,7 +59,7 @@ public class AdServiceImpl implements AdService {
         UserEntity savedUser = userRepository.save(userEntity);
         AdEntity savedAd = adRepository.save(adEntity);
 
-        log.debug("Saved AdEntity '{}' to UserEntity '{}'", savedAd, savedUser);
+        log.debug("Saved ad {} to user {}", savedAd, savedUser);
         return adMapper.toDto(savedAd);
     }
 
@@ -75,8 +75,8 @@ public class AdServiceImpl implements AdService {
         boolean exist = adRepository.existsById(id);
         if (exist) {
             adRepository.deleteById(id);
+            log.debug("Removed ad {}", id);
         }
-        log.debug("Removing AdEntity '{}'. Result: {}", id, exist);
         return exist;
     }
 
@@ -91,11 +91,9 @@ public class AdServiceImpl implements AdService {
             adEntity.setDescription(createOrUpdateAd.getDescription());
 
             AdEntity savedAd = adRepository.save(adEntity);
-            log.debug("Updated AdEntity '{}'. Success", id);
+            log.debug("Updated ad {}", savedAd);
             return Optional.of(adMapper.toDto(savedAd));
         }
-
-        log.debug("Updating AdEntity '{}', but not found", id);
         return Optional.empty();
     }
 
@@ -118,15 +116,13 @@ public class AdServiceImpl implements AdService {
                 adEntity.setMediaType(image.getContentType());
 
                 AdEntity savedAd = adRepository.save(adEntity);
-                log.debug("Updated AdEntity's image '{}'. Success", id);
+                log.debug("Updated image of ad {}", adEntity);
                 return Optional.of(Pair.of(savedAd.getImage(), MediaType.parseMediaType(savedAd.getMediaType())));
 
             } catch (IOException _) {
                 throw new java.awt.image.ImagingOpException("Image could not be parsed");
             }
         }
-
-        log.debug("Updating AdEntity's image '{}', but not found", id);
         return Optional.empty();
     }
 }

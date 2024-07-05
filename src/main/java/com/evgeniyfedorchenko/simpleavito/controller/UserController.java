@@ -2,6 +2,7 @@ package com.evgeniyfedorchenko.simpleavito.controller;
 
 import com.evgeniyfedorchenko.simpleavito.dto.NewPassword;
 import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
+import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,14 +24,12 @@ public class UserController {
 
     @PostMapping(path = "/set_password")
     public ResponseEntity<Void> setPassword(@RequestBody @Valid NewPassword newPassword) {
-        userService.setPassword(newPassword);
-        return ResponseEntity.ok().build();
+        return userService.setPassword(newPassword) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @GetMapping(path = "/me")
-    public ResponseEntity<Void> getUser() {
-        userService.getUser();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<User> getUser() {
+        return ResponseEntity.ok(userService.getUser());
     }
 
     @PatchMapping(path = "/me")
@@ -40,8 +39,7 @@ public class UserController {
 
     @PatchMapping(path = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateUserImage(@RequestPart MultipartFile image) {
-        userService.updateUserImage(image);
-        return ResponseEntity.ok().build();
+        return userService.updateUserImage(image) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
 }

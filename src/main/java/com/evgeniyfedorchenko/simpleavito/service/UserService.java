@@ -1,5 +1,6 @@
 package com.evgeniyfedorchenko.simpleavito.service;
 
+import com.evgeniyfedorchenko.simpleavito.dto.User;
 import org.springframework.web.multipart.MultipartFile;
 import com.evgeniyfedorchenko.simpleavito.dto.NewPassword;
 import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
@@ -7,11 +8,11 @@ import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
 public interface UserService {
 
 
-    void setPassword(NewPassword newPassword);
+    boolean setPassword(NewPassword newPassword);
 
-    void getUser();
+    User getUser();
 
     UpdateUser updateUser(UpdateUser updateUser);
 
-    void updateUserImage(MultipartFile image);
+    boolean updateUserImage(MultipartFile image);
 }
