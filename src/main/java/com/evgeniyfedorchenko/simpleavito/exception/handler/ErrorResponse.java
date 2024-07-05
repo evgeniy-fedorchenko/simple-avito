@@ -24,17 +24,18 @@ import java.util.Objects;
  * @apiNote Пример сериализованого объекта:
  * <blockquote><pre>
  * {
- *   "code": 4,
- *   "errorsCount": 2,
- *   "details": {
- *       "description": "size must be between 8 and 64",
- *       "title": "size must be between 4 and 32"
- *   },
- *   "badObject": {
- *       "title": "t",
- *       "price": -1,
- *       "description": "very vey vey very large text field"
- *   }
+ *     "code": 4,
+ *     "detailsMap": {
+ *         "description": "size must be between 8 and 64",
+ *         "title": "size must be between 4 and 32"
+ *     },
+ *     "errors_count": 2,
+ *     "bad_object_name": "properties",
+ *     "bad_object_params": {
+ *         "title": "t",
+ *         "price": -1,
+ *         "description": "very vey vey very large text field"
+ *     }
  * }
  * </pre></blockquote>
  */
