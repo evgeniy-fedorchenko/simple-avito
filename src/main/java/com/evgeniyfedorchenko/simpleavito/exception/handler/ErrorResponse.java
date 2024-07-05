@@ -28,7 +28,7 @@ import java.util.Map;
  *         "description": "size must be between 8 and 64",
  *         "title": "size must be between 4 and 32"
  *     },
- *     "errors_count": 2,
+ *     "errors_count": 3,
  *     "bad_object_name": "properties",
  *     "bad_object_params": {
  *         "title": "t",
