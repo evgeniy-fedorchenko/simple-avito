@@ -25,7 +25,7 @@ import java.util.Objects;
  * <blockquote><pre>
  * {
  *     "code": 4,
- *     "detailsMap": {
+ *     "details_map": {
  *         "description": "size must be between 8 and 64",
  *         "title": "size must be between 4 and 32"
  *     },
@@ -49,6 +49,7 @@ public final class ErrorResponse {
     @JsonProperty("errors_count")
     private final int errorsCount;
 
+    @JsonProperty("details_map")
     private final Map<String, String> detailsMap;
 
     private final String details;
