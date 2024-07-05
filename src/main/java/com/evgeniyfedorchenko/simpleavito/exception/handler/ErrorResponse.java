@@ -26,6 +26,7 @@ import java.util.Objects;
  * {
  *     "code": 4,
  *     "details_map": {
+ *         "price": "must be greater than or equal to 0",
  *         "description": "size must be between 8 and 64",
  *         "title": "size must be between 4 and 32"
  *     },
