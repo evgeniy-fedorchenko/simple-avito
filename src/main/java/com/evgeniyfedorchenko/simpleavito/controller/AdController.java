@@ -33,9 +33,8 @@ public class AdController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Ad> addAd(@RequestPart @Valid CreateOrUpdateAd properties,
-                                    @RequestPart MultipartFile image,
-                                    Authentication auth) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(adService.addAd(properties, image, auth.getName()));
+                                    @RequestPart MultipartFile image) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(adService.addAd(properties, image));
     }
 
     @GetMapping(path = "/{id}")

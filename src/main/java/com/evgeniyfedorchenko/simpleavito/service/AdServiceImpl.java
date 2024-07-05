@@ -38,7 +38,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    public Ad addAd(CreateOrUpdateAd properties, MultipartFile image, String username) {
+    public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
 
         AdEntity adEntity = new AdEntity();
 

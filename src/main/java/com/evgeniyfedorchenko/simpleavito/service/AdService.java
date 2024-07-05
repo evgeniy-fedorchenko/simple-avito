@@ -14,7 +14,7 @@ public interface AdService {
 
     Ads getAllAds();
 
-    Ad addAd(CreateOrUpdateAd properties, MultipartFile image, String username);
+    Ad addAd(CreateOrUpdateAd properties, MultipartFile image);
 
     Optional<ExtendedAd> getAds(long id);
 
