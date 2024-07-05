@@ -2,13 +2,11 @@ package com.evgeniyfedorchenko.simpleavito.exception.handler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
-import java.util.Objects;
 
 
 /**
