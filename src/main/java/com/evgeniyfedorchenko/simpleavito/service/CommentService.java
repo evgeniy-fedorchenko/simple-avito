@@ -10,9 +10,9 @@ public interface CommentService {
 
     Optional<Comments> getComments(long adId);
 
-    Comment addComment(long id, CreateOrUpdateComment createOrUpdateComment);
+    Optional<Comment> addComment(long adId, CreateOrUpdateComment createOrUpdateComment);
 
-    void deleteComment(long adId, long commentId);
+    boolean deleteComment(long adId, long commentId);
 
-    Comment updateComment(long adId, long commentId, CreateOrUpdateComment comment);
+    Optional<Comment> updateComment(long adId, long commentId, CreateOrUpdateComment comment);
 }

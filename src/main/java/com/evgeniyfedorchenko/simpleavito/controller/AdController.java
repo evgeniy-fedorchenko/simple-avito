@@ -79,22 +79,23 @@ public class AdController {
     }
 
     @PostMapping(path = "/{id}/comments")
-    public ResponseEntity<Comment> addComment(@PathVariable long id,
+    public ResponseEntity<Comment> addComment(@PathVariable("id") long adId,
                                               @RequestBody @Valid CreateOrUpdateComment createOrUpdateComment) {
-        return ResponseEntity.ok(commentService.addComment(id, createOrUpdateComment));
+        return ResponseEntity.of(commentService.addComment(adId, createOrUpdateComment));
     }
 
     @DeleteMapping(path = "/{adId}/comments/{commentId}")
     public ResponseEntity<Void> removeComment(@PathVariable long adId, @PathVariable long commentId) {
-        commentService.deleteComment(adId, commentId);
-        return ResponseEntity.ok().build();
+        return commentService.deleteComment(adId, commentId)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
     }
 
     @PostMapping(path = "/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable long adId,
                                                  @PathVariable long commentId,
                                                  @RequestBody @Valid CreateOrUpdateComment comment) {
-        return ResponseEntity.ok(commentService.updateComment(adId, commentId, comment));
+        return ResponseEntity.of(commentService.updateComment(adId, commentId, comment));
 
     }
 }

@@ -46,6 +46,11 @@ public class UserEntity {
     @NotNull
     private Role role;
 
+    @NotNull
+    @Size(min = 8, max = 16)
+    @ToString.Exclude
+    private String password;
+
     @Nullable
     @Lob
     @Column(columnDefinition = "oid")

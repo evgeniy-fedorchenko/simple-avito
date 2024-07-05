@@ -30,7 +30,7 @@ public class CommentMapper {
         return comment;
     }
 
-    public Comments toDto(List<CommentEntity> commentEntities) {
+    public Comments toDtos(List<CommentEntity> commentEntities) {
         Comments comments = new Comments();
 
         comments.setCount(commentEntities.size());
