@@ -7,7 +7,6 @@ import lombok.*;
    Если в других дтошках я сделал просто @ToString.Exclude на пароле, то в этом
    объекте фактически вообще нет полей, которые можно отобразить через toString() */
 
-@ToString
 @Getter
 @Setter
 @RequiredArgsConstructor
