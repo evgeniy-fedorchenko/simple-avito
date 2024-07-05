@@ -22,7 +22,7 @@ public interface AdService {
 
     Optional<Ad> updateAds(long id, CreateOrUpdateAd createOrUpdateAd);
 
-    Optional<Ads> getAdsMe(String name);
+    Optional<Ads> getAdsMe();
 
     Optional<Pair<byte[], MediaType>> updateImage(long id, MultipartFile image);
 }

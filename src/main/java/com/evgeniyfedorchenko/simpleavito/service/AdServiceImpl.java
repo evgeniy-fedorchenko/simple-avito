@@ -99,7 +99,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Ads> getAdsMe(String name) {
+    public Optional<Ads> getAdsMe() {
         UserEntity userEntity = userRepository.findByEmail(authService.getUsername());
         return Optional.of(adMapper.toDtos(userEntity.getAds()));
     }
