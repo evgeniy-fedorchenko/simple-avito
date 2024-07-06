@@ -54,11 +54,13 @@ public class UserEntity {
     @Nullable
     @Lob
     @Column(columnDefinition = "oid")
+    @ToString.Exclude
     private byte[] image;
 
     @Size(min = 5, max = 25)
     private String mediaType;
 
+    @ToString.Exclude
     @Nullable
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<AdEntity> ads = new ArrayList<>();

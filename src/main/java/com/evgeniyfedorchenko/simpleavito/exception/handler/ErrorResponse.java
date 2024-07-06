@@ -14,25 +14,26 @@ import java.util.Map;
  * Создан с целью стандартизировать слишком обобщенный ответ {@code ResponseEntity.badRequest().build()}
  * Должен быть возвращен в теле ответа при обнаружении ситуаций, требующий возврата {@link HttpStatus#BAD_REQUEST}
  *
- * @field code        Пользовательский код ошибки
- * @field errorsCount Количество найденных нарушений
- * @field details     Детальное сообщение об обнаруженных нарушениях
- * @field badObject   Исходный невалидный объект
+ * @field {@code code} -        Пользовательский код ошибки
+ * @field {@code errorsCount} - Количество найденных нарушений
+ * @field {@code detailsMap} -  Карта с детальными сообщениями об обнаруженных нарушениях с разбивкой по параметрам,
+ *                               используется при обнаружении нескольких нарушений
+ * @field {@code details} -     Детальное сообщение об обнаруженных нарушениях
+ * @field {@code badObject} -   Исходный невалидный объект
  *
  * @apiNote Пример сериализованого объекта:
  * <blockquote><pre>
  * {
  *     "code": 4,
  *     "details_map": {
- *         "price": "must be greater than or equal to 0",
- *         "description": "size must be between 8 and 64",
- *         "title": "size must be between 4 and 32"
+ *         "title": "size must be between 4 and 32",
+ *         "description": "size must be between 8 and 64"
  *     },
- *     "errors_count": 3,
+ *     "errors_count": 2,
  *     "bad_object_name": "properties",
  *     "bad_object_params": {
  *         "title": "t",
- *         "price": -1,
+ *         "price": 1000,
  *         "description": "very vey vey very large text field"
  *     }
  * }
