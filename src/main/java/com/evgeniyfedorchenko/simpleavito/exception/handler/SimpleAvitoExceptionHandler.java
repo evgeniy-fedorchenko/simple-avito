@@ -1,5 +1,6 @@
 package com.evgeniyfedorchenko.simpleavito.exception.handler;
 
+import com.evgeniyfedorchenko.simpleavito.exception.ImageParsedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,14 +17,14 @@ import java.util.stream.Collectors;
 public class SimpleAvitoExceptionHandler {
 
 //    Ошибка при обработке переданного изображения
-    @ExceptionHandler(ImagingOpException.class)
-    public ResponseEntity<ErrorResponse> handleImagingOpException(ImagingOpException ex) {
+    @ExceptionHandler(ImageParsedException.class)
+    public ResponseEntity<ErrorResponse> handleImageParsedException(ImageParsedException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(1)
                 .errorsCount(1)
                 .details(ex.getMessage())
                 .build();
-        log.trace("ImagingOpException was thrown. Handle and suppress. Ex:", ex);
+        log.trace("{} was thrown. Handle and suppress. Ex:", ex.getClass().getSimpleName(), ex);
         return ResponseEntity.badRequest().body(errorResponse);
     }
 

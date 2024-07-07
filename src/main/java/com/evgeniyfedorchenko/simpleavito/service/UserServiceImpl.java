@@ -4,6 +4,7 @@ import com.evgeniyfedorchenko.simpleavito.dto.NewPassword;
 import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
 import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
+import com.evgeniyfedorchenko.simpleavito.exception.ImageParsedException;
 import com.evgeniyfedorchenko.simpleavito.mapper.UserMapper;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -64,14 +65,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean updateUserImage(MultipartFile image) {
         UserEntity userEntity = userRepository.findByEmail(authService.getUsername());
+
         try {
             userEntity.setImage(image.getBytes());
-            userEntity.setMediaType(image.getContentType());
+            UserEntity savedUser = userRepository.save(userEntity);
+            log.debug("Updated image of user {}", savedUser);
+            return true;
+
         } catch (IOException _) {
-            throw new java.awt.image.ImagingOpException("Image could not be parsed");
+            throw new ImageParsedException("Image could not be parsed");
         }
-        UserEntity savedUser = userRepository.save(userEntity);
-        log.debug("Updated image of user {}", savedUser);
-        return true;
     }
 }

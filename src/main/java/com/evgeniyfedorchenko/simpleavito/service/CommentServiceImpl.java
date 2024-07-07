@@ -37,12 +37,13 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public Optional<Comment> addComment(long adId, CreateOrUpdateComment createOrUpdateComment) {
         Optional<AdEntity> adEntityOpt = adRepository.findById(adId);
-        if (!adEntityOpt.isEmpty()) {
+        if (adEntityOpt.isEmpty()) {
             return Optional.empty();
         }
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setAuthor(userRepository.findByEmail(authService.getUsername()));
         commentEntity.setText(createOrUpdateComment.getText());
+        commentEntity.setCreatedAt(System.currentTimeMillis());
         CommentEntity savedComment = commentRepository.save(commentEntity);
 
         log.debug("Created comment {}", savedComment);
@@ -52,38 +53,28 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public boolean deleteComment(long adId, long commentId) {
-        Optional<AdEntity> adEntityOpt = adRepository.findById(adId);
-        if (adEntityOpt.isEmpty()) {
+        Optional<CommentEntity> commentOpt = commentRepository.findById(commentId);
+        if (commentOpt.isEmpty() || commentOpt.get().getAd().getId() != adId) {
             return false;
         }
-        Optional<CommentEntity> commentEntityOpt = commentRepository.findById(commentId);
-        if (commentEntityOpt.isEmpty()) {
-            return false;
-        }
-        if (adEntityOpt.get().getComments().contains(commentEntityOpt.get())) {
-            commentRepository.deleteById(commentId);
-            log.debug("Deleted comment {}", commentEntityOpt.get());
-            return true;
-        }
-        return false;
+
+        commentRepository.deleteById(commentId);
+        log.debug("Deleted comment {}", commentOpt.get());
+        return true;
     }
 
     @Override
     @Transactional
     public Optional<Comment> updateComment(long adId, long commentId, CreateOrUpdateComment comment) {
-        Optional<AdEntity> adEntityOpt = adRepository.findById(adId);
-        if (adEntityOpt.isEmpty()) {
+
+        Optional<CommentEntity> commentOpt = commentRepository.findById(commentId);
+        if (commentOpt.isEmpty() || commentOpt.get().getAd().getId() != adId) {
             return Optional.empty();
         }
-        Optional<CommentEntity> commentEntityOpt = commentRepository.findById(commentId);
-        if (commentEntityOpt.isEmpty()) {
-            return Optional.empty();
-        }
-        if (!adEntityOpt.get().getComments().contains(commentEntityOpt.get())) {
-            return Optional.empty();
-        }
-        commentEntityOpt.get().setText(comment.getText());
-        CommentEntity savedComment = commentRepository.save(commentEntityOpt.get());
+
+        commentOpt.get().setText(comment.getText());
+        CommentEntity savedComment = commentRepository.save(commentOpt.get());
+
         log.debug("Updated comment {}", savedComment);
         return Optional.of(commentMapper.toDto(savedComment));
     }
