@@ -3,15 +3,15 @@ package com.evgeniyfedorchenko.simpleavito.mapper;
 import com.evgeniyfedorchenko.simpleavito.controller.UserController;
 import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
+
 @Component
 public class UserMapper {
-
-    @Value("${server.port}")
-    private int port;
 
     public User toDto(UserEntity userEntity) {
         User user = new User();
@@ -22,22 +22,23 @@ public class UserMapper {
         user.setLastName(userEntity.getLastName());
         user.setPhone(userEntity.getPhone());
         user.setRole(userEntity.getRole());
-        user.setImage(userEntity.hasImage() ? generateImageUrl(userEntity.getId()) : "no image");
+
+        user.setImage(userEntity.hasImage()
+                ? generateImageUrl(userEntity.getId(), UserController.IMAGE_PATH_SEGMENT)
+                : null
+        );
 
         return user;
     }
 
-    protected String generateImageUrl(long id) {
+    protected String generateImageUrl(long id, @Nullable String... pathSegments) {
 
-        return UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host("localhost")
-                .port(port)
-                .path(UserController.BASE_USER_URI)
-                .pathSegment(String.valueOf(id), UserController.IMAGE_PATH_SEGMENT)
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance().pathSegment(String.valueOf(id));
+        if (pathSegments != null) {
+            Arrays.stream(pathSegments).forEach(uriComponentsBuilder::pathSegment);
+        }
+        return uriComponentsBuilder.build().toUriString();
 
-                .build()
-                .toUri()
-                .toString();
     }
+
 }

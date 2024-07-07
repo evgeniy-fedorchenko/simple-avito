@@ -92,7 +92,7 @@ public class AdController {
                 : ResponseEntity.notFound().build();
     }
 
-    @PostMapping(path = "/{adId}/comments/{commentId}")
+    @PatchMapping(path = "/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable @Positive long adId,
                                                  @PathVariable @Positive long commentId,
                                                  @RequestBody @Valid CreateOrUpdateComment comment) {
