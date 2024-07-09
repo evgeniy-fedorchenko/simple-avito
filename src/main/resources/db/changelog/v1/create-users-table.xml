@@ -48,12 +48,12 @@
 
         <sql>
             ALTER TABLE users ADD CONSTRAINT email_pattern CHECK (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
-            ALTER TABLE users ADD CONSTRAINT email_len CHECK (length(email) >= 32);
-            ALTER TABLE users ADD CONSTRAINT first_name_len CHECK (length(first_name) >= 2);
-            ALTER TABLE users ADD CONSTRAINT last_name_len CHECK (length(last_name) >= 2);
+            ALTER TABLE users ADD CONSTRAINT email_min_len CHECK (length(email) >= 4);
+            ALTER TABLE users ADD CONSTRAINT first_name_min_len CHECK (length(first_name) >= 2);
+            ALTER TABLE users ADD CONSTRAINT last_name_min_len CHECK (length(last_name) >= 2);
             ALTER TABLE users ADD CONSTRAINT phone_pattern CHECK (phone ~ '^\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$');
             ALTER TABLE users ADD CONSTRAINT role_values CHECK (role IN ('ADMIN', 'USER'));
-            ALTER TABLE users ADD CONSTRAINT enc_pass_len CHECK (length(password) >= 60);
+            ALTER TABLE users ADD CONSTRAINT enc_pass_min_len CHECK (length(password) >= 60);
         </sql>
 
     </changeSet>

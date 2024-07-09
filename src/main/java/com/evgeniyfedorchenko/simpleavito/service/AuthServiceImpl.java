@@ -1,18 +1,16 @@
 package com.evgeniyfedorchenko.simpleavito.service;
 
+import com.evgeniyfedorchenko.simpleavito.dto.Register;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import com.evgeniyfedorchenko.simpleavito.mapper.UserMapper;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import com.evgeniyfedorchenko.simpleavito.dto.Register;
 
 @Service
 @RequiredArgsConstructor
@@ -41,14 +39,13 @@ public class AuthServiceImpl implements AuthService {
         try {
             manager.loadUserByUsername(register.getUsername());
         } catch (UsernameNotFoundException _) {
-            return false;
+            UserEntity userEntity = userMapper.fromRegister(register);
+            userRepository.save(userEntity);
+            return true;
         }
 
-        UserEntity userEntity = userMapper.fromRegister(register);
-        userRepository.save(userEntity);
-        return true;
+        return false;
     }
-
 
     @Override
     public String getUsername() {

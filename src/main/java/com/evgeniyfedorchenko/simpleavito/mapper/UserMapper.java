@@ -6,7 +6,6 @@ import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
