@@ -21,30 +21,40 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="email" type="varchar(32)">
-                <constraints nullable="false" unique="true" checkConstraint="char_length(email) >= 4"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="first_name" type="varchar(16)">
-                <constraints nullable="false" checkConstraint="char_length(first_name) >= 2"/>
+                <constraints nullable="false"/>
             </column>
             <column name="last_name" type="varchar(16)">
-                <constraints nullable="false" checkConstraint="char_length(last_name) >= 2"/>
+                <constraints nullable="false"/>
             </column>
             <column name="phone" type="varchar(17)">
-                <constraints nullable="false" checkConstraint="check (phone LIKE '(\+79|79|89)\d{9}')"/>
+                <constraints nullable="false"/>
             </column>
             <column name="role" type="varchar(20)">
-                <constraints nullable="true" checkConstraint="role IN ('ADMIN', 'USER')"/>
+                <constraints nullable="false"/>
             </column>
 
             <!-- по разным данным пароль зашифрованный BCryptPasswordEncoder имеет длину от 60 до 62 символов -->
             <column name="password" type="varchar(62)">
-                <constraints nullable="false" checkConstraint="char_length(password) >= 60"/>
+                <constraints nullable="false"/>
             </column>
 
             <column name="image" type="oid">
                 <constraints nullable="true"/>
             </column>
         </createTable>
+
+        <sql>
+            ALTER TABLE users ADD CONSTRAINT email_pattern CHECK (email ~ '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+            ALTER TABLE users ADD CONSTRAINT email_len CHECK (length(email) >= 32);
+            ALTER TABLE users ADD CONSTRAINT first_name_len CHECK (length(first_name) >= 2);
+            ALTER TABLE users ADD CONSTRAINT last_name_len CHECK (length(last_name) >= 2);
+            ALTER TABLE users ADD CONSTRAINT phone_pattern CHECK (phone ~ '^\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$');
+            ALTER TABLE users ADD CONSTRAINT role_values CHECK (role IN ('ADMIN', 'USER'));
+            ALTER TABLE users ADD CONSTRAINT enc_pass_len CHECK (length(password) >= 60);
+        </sql>
 
     </changeSet>
 

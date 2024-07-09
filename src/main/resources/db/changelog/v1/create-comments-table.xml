@@ -37,6 +37,13 @@
             </column>
         </createTable>
 
+        <sql>
+            ALTER TABLE comments ADD CONSTRAINT user_id_min CHECK (user_id > 0);
+            ALTER TABLE comments ADD CONSTRAINT ad_id_min CHECK (ad_id > 0);
+            ALTER TABLE comments ADD CONSTRAINT created_at_min CHECK (created_at > EXTRACT(EPOCH FROM NOW()) * 1000);
+            ALTER TABLE comments ADD CONSTRAINT text_len CHECK (length(text) >= 8);
+        </sql>
+
         <addForeignKeyConstraint baseTableName="comments"
                                  baseColumnNames="user_id"
                                  constraintName="fk_comments_user_id"

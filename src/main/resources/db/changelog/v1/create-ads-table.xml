@@ -39,12 +39,14 @@
                 <constraints nullable="true"/>
             </column>
         </createTable>
+
         <sql>
-            ALTER TABLE ads ADD CONSTRAINT min_user_id CHECK (user_id > 0);
-            ALTER TABLE ads ADD CONSTRAINT price_boundaries CHECK (price &gt;= 0 AND 10000000 &gt;= price);
-            ALTER TABLE ads ADD CONSTRAINT min_length_title CHECK (length(title) &gt;= 4);
-            ALTER TABLE ads ADD CONSTRAINT min_length_description CHECK (length(description) &gt;= 8);
+            ALTER TABLE ads ADD CONSTRAINT user_id_min CHECK (user_id > 0);
+            ALTER TABLE ads ADD CONSTRAINT price_bounds CHECK (price >= 0 AND 1000000 >= price);
+            ALTER TABLE ads ADD CONSTRAINT title_len CHECK (length(title) >= 4 AND 32 >= length(title));
+            ALTER TABLE ads ADD CONSTRAINT description_len CHECK (length(description) >= 8 AND 64 >= length(description));
         </sql>
+
         <addForeignKeyConstraint baseTableName="ads"
                                  baseColumnNames="user_id"
                                  constraintName="fk_ads_user_id"
