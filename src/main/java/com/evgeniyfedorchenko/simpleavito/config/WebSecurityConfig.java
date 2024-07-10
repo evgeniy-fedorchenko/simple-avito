@@ -16,13 +16,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class WebSecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
-            "/swagger-resources/**",
-            "/swagger-ui.html",
-            "/v3/api-docs",
-            "/webjars/**",
             "/login",
             "/register"
     };
+
 
     /* Вместо этого бина используется UserDetailsServiceImpl, определенный в пакете service */
 

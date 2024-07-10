@@ -12,8 +12,7 @@ import com.evgeniyfedorchenko.simpleavito.repository.AdRepository;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
-import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,12 +75,18 @@ public class AdServiceImpl implements AdService {
     @Override
     @Transactional
     public boolean removeAd(long id) {
-        boolean exist = adRepository.existsById(id);
-        if (exist) {
-            adRepository.deleteById(id);
-            log.debug("Removed ad {}", id);
+
+        Optional<AdEntity> adEntityOpt = adRepository.findById(id);
+        if (adEntityOpt.isEmpty()) {
+            return false;
         }
-        return exist;
+
+        AdEntity adEntity = adEntityOpt.get();
+        throwIfForbidden(adEntity);
+
+        adRepository.deleteById(id);
+        log.debug("Removed ad {}", id);
+        return true;
     }
 
     @Override
@@ -90,6 +95,9 @@ public class AdServiceImpl implements AdService {
 
         if (adEntityOpt.isPresent()) {
             AdEntity adEntity = adEntityOpt.get();
+
+            throwIfForbidden(adEntity);
+
             adEntity.setTitle(createOrUpdateAd.getTitle());
             adEntity.setPrice(createOrUpdateAd.getPrice());
             adEntity.setDescription(createOrUpdateAd.getDescription());
@@ -114,10 +122,12 @@ public class AdServiceImpl implements AdService {
         Optional<AdEntity> adEntityOpt = adRepository.findById(id);
 
         if (adEntityOpt.isPresent()) {
-            try {
-                AdEntity adEntity = adEntityOpt.get();
-                adEntity.setImage(image.getBytes());
 
+            AdEntity adEntity = adEntityOpt.get();
+            throwIfForbidden(adEntity);
+
+            try {
+                adEntity.setImage(image.getBytes());
                 AdEntity savedAd = adRepository.save(adEntity);
                 log.debug("Updated image of ad {}", adEntity);
                 return Optional.of(savedAd.getImage());
@@ -127,5 +137,20 @@ public class AdServiceImpl implements AdService {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Метод проверяет, если у авторизованного в данный момент юзера права изменять/удалять соответсвующее объявление
+     * @param targetAd сущность объявления для проверки
+     * @throws AccessDeniedException если авторизованному в данный момент пользователю
+     *                               запрещено изменять/удалять объявление, переданное в параметре
+     */
+    private void throwIfForbidden(AdEntity targetAd) {
+
+        if (!targetAd.getAuthor().getEmail().equals(authService.getUsername()) && !authService.isAdmin()) {
+            throw new AccessDeniedException("%s don't have permission to remove someone else's ad"
+                    .formatted(targetAd.getAuthor().getEmail()));
+        }
+
     }
 }

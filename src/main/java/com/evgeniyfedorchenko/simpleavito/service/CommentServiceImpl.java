@@ -11,6 +11,7 @@ import com.evgeniyfedorchenko.simpleavito.repository.CommentRepository;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +59,9 @@ public class CommentServiceImpl implements CommentService {
             return false;
         }
 
+        CommentEntity commentEntity = commentOpt.get();
+        throwIfForbidden(commentEntity);
+
         commentRepository.deleteById(commentId);
         log.debug("Deleted comment {}", commentOpt.get());
         return true;
@@ -72,10 +76,29 @@ public class CommentServiceImpl implements CommentService {
             return Optional.empty();
         }
 
-        commentOpt.get().setText(comment.getText());
+        CommentEntity commentEntity = commentOpt.get();
+        throwIfForbidden(commentEntity);
+
+        commentEntity.setText(comment.getText());
         CommentEntity savedComment = commentRepository.save(commentOpt.get());
 
         log.debug("Updated comment {}", savedComment);
         return Optional.of(commentMapper.toDto(savedComment));
     }
+
+    /**
+     * Метод проверяет, если у авторизованного в данный момент юзера права изменять/удалять соответсвующий комментарий
+     * @param targetComment сущность комментария для проверки
+     * @throws AccessDeniedException если авторизованному в данный момент пользователю
+     *                               запрещено изменять/удалять комментарий, переданный в параметре
+     */
+    private void throwIfForbidden(CommentEntity targetComment) {
+
+        if (!targetComment.getAuthor().getEmail().equals(authService.getUsername()) && !authService.isAdmin()) {
+            throw new AccessDeniedException("%s don't have permission to remove someone else's ad"
+                    .formatted(targetComment.getAuthor().getEmail()));
+        }
+
+    }
+
 }
