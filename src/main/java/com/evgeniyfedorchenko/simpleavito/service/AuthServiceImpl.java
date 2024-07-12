@@ -40,12 +40,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean register(Register register) {
 
-        try {
-            manager.loadUserByUsername(register.getUsername());
+        if (userRepository.findByEmail(register.getUsername()) != null) {
             return false;
-        } catch (UsernameNotFoundException _) {
-//            User doesn't exist, we can create a new one
         }
+
         UserEntity userEntity = userMapper.fromRegister(register);
         userRepository.save(userEntity);
         return true;

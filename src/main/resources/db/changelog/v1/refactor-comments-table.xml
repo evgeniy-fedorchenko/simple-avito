@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+
+    <changeSet id="4" author="evgeniy-fedorchenko">
+
+        <preConditions onFail="HALT">
+            <tableExists tableName="comments"/>
+            <sqlCheck expectedResult="2">
+                SELECT COUNT(*)
+                FROM information_schema.table_constraints
+                WHERE (constraint_name = 'user_id_min' OR constraint_name = 'ad_id_min')
+                  AND table_name = 'comments'
+            </sqlCheck>
+        </preConditions>
+
+        <comment>
+            Refactor table 'comments': delete constraints for foreign keys and
+            change type of 'created_at' column to timestamp (its constraint saved)
+        </comment>
+
+        <sql>
+            ALTER TABLE public.comments DROP CONSTRAINT user_id_min;
+            ALTER TABLE public.comments DROP CONSTRAINT ad_id_min;
+            ALTER TABLE comments DROP CONSTRAINT created_at_min;
+        </sql>
+
+
+        <addColumn tableName="comments">
+            <column name="temp_created_at" type="timestamp" computed="true"
+                    valueComputed="to_timestamp(created_at / 1000)"/>
+        </addColumn>
+
+        <dropColumn tableName="comments" columnName="created_at"/>
+
+        <renameColumn tableName="comments"
+                      oldColumnName="temp_created_at"
+                      newColumnName="created_at"/>
+
+
+        <sql>
+            ALTER TABLE comments
+                ADD CONSTRAINT created_at_min CHECK (created_at > NOW())
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

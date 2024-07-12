@@ -24,13 +24,13 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints nullable="true" checkConstraint="user_id >= 1"/>
+                <constraints nullable="true"/>
             </column>
             <column name="ad_id" type="bigint">
-                <constraints nullable="false" checkConstraint="ad_id >= 1"/>
+                <constraints nullable="false"/>
             </column>
             <column name="created_at" type="bigint">
-                <constraints nullable="false" checkConstraint="created_at >= 0"/>
+                <constraints nullable="false"/>
             </column>
             <column name="text" type="varchar(64)">
                 <constraints nullable="false"/>

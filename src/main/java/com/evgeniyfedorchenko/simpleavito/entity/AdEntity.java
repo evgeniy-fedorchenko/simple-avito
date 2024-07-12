@@ -41,8 +41,6 @@ public class AdEntity {
     @Nullable
     private String description;
 
-    /* Это поле тут не обязательно, но я оставил, чтобы можно было указать настройки для него,
-       например orphanRemoval вообще нельзя указать с той стороны этой связи */
     @Nullable
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -50,10 +48,6 @@ public class AdEntity {
 
     public boolean hasImage() {
         return image != null && image.length > 0;
-    }
-
-    public boolean hasDescription() {
-        return description != null && description.isBlank();
     }
 
 }
