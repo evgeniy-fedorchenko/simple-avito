@@ -1,5 +1,6 @@
 package com.evgeniyfedorchenko.simpleavito.mapper;
 
+import com.evgeniyfedorchenko.simpleavito.controller.UserController;
 import com.evgeniyfedorchenko.simpleavito.dto.Comment;
 import com.evgeniyfedorchenko.simpleavito.dto.Comments;
 import com.evgeniyfedorchenko.simpleavito.entity.CommentEntity;
@@ -22,10 +23,14 @@ public class CommentMapper {
         UserEntity author = commentEntity.getAuthor();
 
         comment.setAuthor(author.getId());
-        comment.setAuthorImage(author.hasImage() ? userMapper.generateImageUrl(author.getId()) : "no author image");
         comment.setAuthorFirstName(author.getFirstName());
         comment.setPk(commentEntity.getId());
         comment.setText(commentEntity.getText());
+
+        comment.setAuthorImage(author.hasImage()
+                ? userMapper.generateImageUrl(author.getId(), UserController.IMAGE_PATH_SEGMENT)
+                : null
+        );
 
         return comment;
     }
@@ -35,9 +40,6 @@ public class CommentMapper {
 
         comments.setCount(commentEntities.size());
         comments.setResults(commentEntities.stream().map(this::toDto).toList());
-
-        LocalDateTime now = LocalDateTime.now();
-        now.toInstant(ZoneOffset.MAX);
 
         return comments;
     }

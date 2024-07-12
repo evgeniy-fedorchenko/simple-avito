@@ -63,12 +63,7 @@ public class AdController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<byte[]> updateImage(@PathVariable @Positive long id, @RequestPart MultipartFile image) {
-        return adService.updateImage(id, image)
-                .map(resp -> ResponseEntity.status(HttpStatus.OK)
-                        .contentLength(resp.getFirst().length)
-                        .contentType(resp.getSecond())
-                        .body(resp.getFirst()))
-                .orElseGet(() -> ResponseEntity.of(Optional.empty()));
+        return ResponseEntity.of(adService.updateImage(id, image));
     }
 
 
@@ -92,7 +87,7 @@ public class AdController {
                 : ResponseEntity.notFound().build();
     }
 
-    @PostMapping(path = "/{adId}/comments/{commentId}")
+    @PatchMapping(path = "/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable @Positive long adId,
                                                  @PathVariable @Positive long commentId,
                                                  @RequestBody @Valid CreateOrUpdateComment comment) {

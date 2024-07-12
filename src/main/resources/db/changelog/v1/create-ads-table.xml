@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+
+    <changeSet id="2" author="evgeniy-fedorchenko">
+
+        <preConditions onFail="HALT">
+            <and>
+                <not>
+                    <tableExists tableName="ads"/>
+                </not>
+                <tableExists tableName="users"/>
+            </and>
+        </preConditions>
+
+        <comment>Create table 'ads' for entity 'AdEntity'</comment>
+
+        <createTable tableName="ads">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="oid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="price" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(64)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <sql>
+            ALTER TABLE ads ADD CONSTRAINT user_id_min CHECK (user_id > 0);
+            ALTER TABLE ads ADD CONSTRAINT price_bounds CHECK (price >= 0 AND 1000000 >= price);
+            ALTER TABLE ads ADD CONSTRAINT title_min_len CHECK (length(title) >= 4);
+            ALTER TABLE ads ADD CONSTRAINT description_min_len CHECK (length(description) >= 8);
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="ads"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_ads_user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>
