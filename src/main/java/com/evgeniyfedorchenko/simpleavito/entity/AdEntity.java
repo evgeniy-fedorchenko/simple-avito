@@ -11,21 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString
 @Entity
 @Table(name = "ads")
-public class AdEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    private long id;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity author;
+public class AdEntity extends UserEntityRelated {
 
     @Lob
     @Column(columnDefinition = "oid")

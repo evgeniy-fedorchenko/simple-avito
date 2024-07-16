@@ -11,10 +11,11 @@ import com.evgeniyfedorchenko.simpleavito.repository.CommentRepository;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Slf4j
@@ -53,14 +54,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize(value = "authChecker.hasPermissionToEdit(commentId, @commentEntityClass)")
     public boolean deleteComment(long adId, long commentId) {
+
         Optional<CommentEntity> commentOpt = commentRepository.findById(commentId);
         if (commentOpt.isEmpty() || commentOpt.get().getAd().getId() != adId) {
             return false;
         }
-
-        CommentEntity commentEntity = commentOpt.get();
-        throwIfForbidden(commentEntity);
 
         commentRepository.deleteById(commentId);
         log.debug("Deleted comment {}", commentOpt.get());
@@ -69,6 +69,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize(value = "authChecker.hasPermissionToEdit(commentId, @commentEntityClass)")
     public Optional<Comment> updateComment(long adId, long commentId, CreateOrUpdateComment comment) {
 
         Optional<CommentEntity> commentOpt = commentRepository.findById(commentId);
@@ -77,28 +78,11 @@ public class CommentServiceImpl implements CommentService {
         }
 
         CommentEntity commentEntity = commentOpt.get();
-        throwIfForbidden(commentEntity);
-
         commentEntity.setText(comment.getText());
-        CommentEntity savedComment = commentRepository.save(commentOpt.get());
+        CommentEntity savedComment = commentRepository.save(commentEntity);
 
         log.debug("Updated comment {}", savedComment);
         return Optional.of(commentMapper.toDto(savedComment));
-    }
-
-    /**
-     * Метод проверяет, если у авторизованного в данный момент юзера права изменять/удалять соответсвующий комментарий
-     * @param targetComment сущность комментария для проверки
-     * @throws AccessDeniedException если авторизованному в данный момент пользователю
-     *                               запрещено изменять/удалять комментарий, переданный в параметре
-     */
-    private void throwIfForbidden(CommentEntity targetComment) {
-
-        if (!targetComment.getAuthor().getEmail().equals(authService.getUsername()) && !authService.isAdmin()) {
-            throw new AccessDeniedException("%s don't have permission to remove someone else's ad"
-                    .formatted(targetComment.getAuthor().getEmail()));
-        }
-
     }
 
 }
