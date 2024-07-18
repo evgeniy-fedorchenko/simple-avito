@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -42,19 +43,31 @@ public class CommentServiceImpl implements CommentService {
         if (adEntityOpt.isEmpty()) {
             return Optional.empty();
         }
+        AdEntity adEntity = adEntityOpt.get();
+
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setAuthor(userRepository.findByEmail(authService.getUsername()));
         commentEntity.setText(createOrUpdateComment.getText());
-        commentEntity.setCreatedAt(Instant.now());
+        Instant now = Instant.now();
+        log.info("now: " + now);
+        commentEntity.setCreatedAt(now);
+        commentEntity.setAd(adEntity);
+
+        List<CommentEntity> comments = adEntity.getComments();
+        comments.add(commentEntity);
+        adEntity.setComments(comments);
+
         CommentEntity savedComment = commentRepository.save(commentEntity);
 
-        log.debug("Created comment {}", savedComment);
+        AdEntity savedAd = adRepository.save(adEntity);
+
+        log.debug("Created comment {} at Ad {}", savedComment, savedAd);
         return Optional.of(commentMapper.toDto(savedComment));
     }
 
     @Override
     @Transactional
-    @PreAuthorize(value = "authChecker.hasPermissionToEdit(commentId, @commentEntityClass)")
+    @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#commentId, @commentRepository)")
     public boolean deleteComment(long adId, long commentId) {
 
         Optional<CommentEntity> commentOpt = commentRepository.findById(commentId);
@@ -69,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize(value = "authChecker.hasPermissionToEdit(commentId, @commentEntityClass)")
+    @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#commentId, @commentRepository)")
     public Optional<Comment> updateComment(long adId, long commentId, CreateOrUpdateComment comment) {
 
         Optional<CommentEntity> commentOpt = commentRepository.findById(commentId);

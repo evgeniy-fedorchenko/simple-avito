@@ -8,8 +8,6 @@ import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Component
@@ -24,6 +22,7 @@ public class CommentMapper {
 
         comment.setAuthor(author.getId());
         comment.setAuthorFirstName(author.getFirstName());
+        comment.setCreatedAt(commentEntity.getCreatedAt().getEpochSecond());
         comment.setPk(commentEntity.getId());
         comment.setText(commentEntity.getText());
 
