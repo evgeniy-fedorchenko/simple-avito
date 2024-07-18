@@ -17,10 +17,9 @@ import java.util.List;
 @Table(name = "ads")
 public class AdEntity extends UserEntityRelated {
 
-    @Lob
-    @Column(columnDefinition = "oid")
-    @ToString.Exclude
-    private byte[] image;
+    @Nullable
+     // TODO 17.07.2024 23:24
+    private String imageUuid;
 
     @NotNull
     private Integer price;
@@ -37,7 +36,7 @@ public class AdEntity extends UserEntityRelated {
     private List<CommentEntity> comments = new ArrayList<>();
 
     public boolean hasImage() {
-        return image != null && image.length > 0;
+        return imageUuid != null;
     }
 
 }

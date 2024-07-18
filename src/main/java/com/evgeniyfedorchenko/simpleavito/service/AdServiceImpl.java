@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -30,6 +31,7 @@ public class AdServiceImpl implements AdService {
     private final AdMapper adMapper;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final ImageService imageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,16 +40,11 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    @Transactional
+    @Transactional // TODO 18.07.2024 22:52: авторизован ли пользователь?
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
 
         AdEntity adEntity = new AdEntity();
-
-        try {
-            adEntity.setImage(image.getBytes());
-        } catch (IOException _) {
-            throw new ImageParsedException("Image could not be parsed");
-        }
+        CompletableFuture<String> imageIdFuture = CompletableFuture.supplyAsync(() -> imageService.saveImage(image));
 
         UserEntity userEntity = userRepository.findByEmail(authService.getUsername());
 
@@ -58,11 +55,13 @@ public class AdServiceImpl implements AdService {
         List<AdEntity> ads = userEntity.getAds();
         ads.add(adEntity);
         userEntity.setAds(ads);
-
+        adEntity.setImageUuid(imageIdFuture.join());
         adEntity.setAuthor(userEntity);
+
+        AdEntity saveAd = adRepository.save(adEntity);
         UserEntity savedUser = userRepository.save(userEntity);
 
-        log.debug("Saved ad {} to user {}", adEntity, savedUser);
+        log.debug("Saved ad {} to user {}", saveAd, savedUser);
         return adMapper.toDto(adEntity);
     }
 
@@ -74,21 +73,25 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    @PreAuthorize(value = "authChecker.hasPermissionToEdit(id, @adEntityClass)")
+    @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#id, @adRepository)")
     public boolean removeAd(long id) {
 
-        if (!adRepository.existsById(id)) {
+        Optional<AdEntity> adEntityOpt = adRepository.findById(id);
+        if (adEntityOpt.isEmpty()) {
             return false;
         }
 
-        adRepository.deleteById(id);
-        log.debug("Removed ad {}", id);
+        CompletableFuture.runAsync(() -> imageService.deleteImage(adEntityOpt.get().getImageUuid()));
+        CompletableFuture.runAsync(() -> adRepository.deleteById(id));
+
+        log.debug("Removing ad {}", id);
         return true;
 
     }
 
     @Override
-    @PreAuthorize(value = "authChecker.hasPermissionToEdit(id, @adEntityClass)")
+    @Transactional
+    @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#id, @adRepository)")
     public Optional<Ad> updateAds(long id, CreateOrUpdateAd createOrUpdateAd) {
         Optional<AdEntity> adEntityOpt = adRepository.findById(id);
 
@@ -116,7 +119,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    @PreAuthorize(value = "authChecker.hasPermissionToEdit(id, @adEntityClass)")
+    @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#id, @adRepository)")
     public Optional<byte[]> updateImage(long id, MultipartFile image) {
         Optional<AdEntity> adEntityOpt = adRepository.findById(id);
 
@@ -124,15 +127,25 @@ public class AdServiceImpl implements AdService {
             return Optional.empty();
         }
 
-        AdEntity adEntity = adEntityOpt.get();
-        try {
-            adEntity.setImage(image.getBytes());
-            AdEntity savedAd = adRepository.save(adEntity);
+        CompletableFuture.runAsync(() -> {
+            AdEntity adEntity = adEntityOpt.get();
+            String imageId = imageService.updateImage(adEntity.getImageUuid(), image);
+            adEntity.setImageUuid(imageId);
             log.debug("Updated image of ad {}", adEntity);
-            return Optional.of(savedAd.getImage());
+            adRepository.save(adEntity);
+        });
 
-        } catch (IOException _) {
+        try {
+            return Optional.of(image.getBytes());
+        } catch (IOException e) {
             throw new ImageParsedException("Image could not be parsed");
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<byte[]> getImage(long id) {
+        return adRepository.findById(id)
+                .map(adEntity -> imageService.getImage(adEntity.getImageUuid()));
     }
 }
