@@ -12,14 +12,13 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@ToString
+@ToString(callSuper = true)
 @Entity
 @Table(name = "ads")
 public class AdEntity extends UserEntityRelated {
 
     @Nullable
-     // TODO 17.07.2024 23:24
-    private String imageUuid;
+    private String imageCombinedId;
 
     @NotNull
     private Integer price;
@@ -36,7 +35,7 @@ public class AdEntity extends UserEntityRelated {
     private List<CommentEntity> comments = new ArrayList<>();
 
     public boolean hasImage() {
-        return imageUuid != null;
+        return imageCombinedId != null;
     }
 
 }

@@ -48,10 +48,7 @@ public class UserEntity {
     private String password;
 
     @Nullable
-    @Lob
-    @Column(columnDefinition = "oid")
-    @ToString.Exclude
-    private byte[] image;
+    private String imageCombinedId;
 
     @ToString.Exclude
     @Nullable
@@ -59,7 +56,7 @@ public class UserEntity {
     private List<AdEntity> ads = new ArrayList<>();
 
     public boolean hasImage() {
-        return image != null && image.length > 0;
+        return imageCombinedId != null;
     }
 
 }
