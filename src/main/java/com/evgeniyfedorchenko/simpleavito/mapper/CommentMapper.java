@@ -22,7 +22,7 @@ public class CommentMapper {
 
         comment.setAuthor(author.getId());
         comment.setAuthorFirstName(author.getFirstName());
-        comment.setCreatedAt(commentEntity.getCreatedAt().getEpochSecond());
+        comment.setCreatedAt(commentEntity.getCreatedAt().toEpochMilli());
         comment.setPk(commentEntity.getId());
         comment.setText(commentEntity.getText());
 

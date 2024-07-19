@@ -48,9 +48,7 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setAuthor(userRepository.findByEmail(authService.getUsername()));
         commentEntity.setText(createOrUpdateComment.getText());
-        Instant now = Instant.now();
-        log.info("now: " + now);
-        commentEntity.setCreatedAt(now);
+        commentEntity.setCreatedAt(Instant.now());
         commentEntity.setAd(adEntity);
 
         List<CommentEntity> comments = adEntity.getComments();
