@@ -51,7 +51,9 @@ public class UserMapper {
 
     protected String generateImageUrl(long id, @Nullable String... pathSegments) {
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance().pathSegment(String.valueOf(id));
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance()
+                .path(UserController.BASE_USER_URI)
+                .pathSegment(String.valueOf(id));
         if (pathSegments != null) {
             Arrays.stream(pathSegments).forEach(uriComponentsBuilder::pathSegment);
         }

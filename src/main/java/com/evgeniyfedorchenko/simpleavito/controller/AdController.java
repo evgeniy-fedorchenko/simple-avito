@@ -64,7 +64,7 @@ public class AdController {
         return ResponseEntity.of(adService.updateImage(id, image));
     }
 
-    @GetMapping(path = "/{id}/image")
+    @GetMapping(path = "/{id}/image", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable @Positive long id) {
         return ResponseEntity.of(adService.getImage(id));
     }
