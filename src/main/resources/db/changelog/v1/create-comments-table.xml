@@ -29,7 +29,7 @@
             <column name="ad_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="bigint">
+            <column name="created_at" type="timestamp">
                 <constraints nullable="false"/>
             </column>
             <column name="text" type="varchar(64)">
@@ -38,9 +38,7 @@
         </createTable>
 
         <sql>
-            ALTER TABLE comments ADD CONSTRAINT user_id_min CHECK (user_id > 0);
-            ALTER TABLE comments ADD CONSTRAINT ad_id_min CHECK (ad_id > 0);
-            ALTER TABLE comments ADD CONSTRAINT created_at_min CHECK (created_at > EXTRACT(EPOCH FROM NOW()) * 1000);
+            ALTER TABLE comments ADD CONSTRAINT created_at_min CHECK (current_timestamp >= created_at);
             ALTER TABLE comments ADD CONSTRAINT text_min_len CHECK (length(text) >= 8);
         </sql>
 

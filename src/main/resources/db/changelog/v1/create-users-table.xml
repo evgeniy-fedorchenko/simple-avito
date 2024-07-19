@@ -16,6 +16,10 @@
 
         <comment>Create table 'users' for entity 'UserEntity'</comment>
 
+        <sql>
+            CREATE TYPE public.role AS ENUM ('ADMIN', 'USER');
+        </sql>
+
         <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -32,7 +36,7 @@
             <column name="phone" type="varchar(17)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="varchar(20)">
+            <column name="role" type="role">
                 <constraints nullable="false"/>
             </column>
 
@@ -41,7 +45,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="image" type="oid">
+            <column name="image_combined_id" type="varchar(128)">
                 <constraints nullable="true"/>
             </column>
         </createTable>
