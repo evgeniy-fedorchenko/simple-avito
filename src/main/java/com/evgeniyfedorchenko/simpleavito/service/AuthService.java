@@ -1,7 +1,7 @@
 package com.evgeniyfedorchenko.simpleavito.service;
 
 import com.evgeniyfedorchenko.simpleavito.dto.Register;
-import com.evgeniyfedorchenko.simpleavito.dto.Role;
+import com.evgeniyfedorchenko.simpleavito.entity.Role;
 
 import java.util.List;
 

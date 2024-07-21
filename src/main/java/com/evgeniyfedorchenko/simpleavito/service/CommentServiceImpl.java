@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Comments> getComments(long adId) {
-        return adRepository.findById(adId).map(adEntity -> commentMapper.toDtos(adEntity.getComments()));
+        return Optional.of(commentMapper.toDtos(commentRepository.findByAdId(adId)));
     }
 
     @Override
@@ -51,15 +50,10 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setCreatedAt(Instant.now());
         commentEntity.setAd(adEntity);
 
-        List<CommentEntity> comments = adEntity.getComments();
-        comments.add(commentEntity);
-        adEntity.setComments(comments);
-
+        adEntity.getComments().add(commentEntity);
         CommentEntity savedComment = commentRepository.save(commentEntity);
 
-        AdEntity savedAd = adRepository.save(adEntity);
-
-        log.debug("Created comment {} at Ad {}", savedComment, savedAd);
+        log.debug("Created comment {} at Ad {}", savedComment, adEntity);
         return Optional.of(commentMapper.toDto(savedComment));
     }
 

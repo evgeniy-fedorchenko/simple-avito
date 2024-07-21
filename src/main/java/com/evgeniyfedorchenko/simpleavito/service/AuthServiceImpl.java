@@ -1,7 +1,7 @@
 package com.evgeniyfedorchenko.simpleavito.service;
 
 import com.evgeniyfedorchenko.simpleavito.dto.Register;
-import com.evgeniyfedorchenko.simpleavito.dto.Role;
+import com.evgeniyfedorchenko.simpleavito.entity.Role;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import com.evgeniyfedorchenko.simpleavito.mapper.UserMapper;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
     public List<Role> getRoles() {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(authority -> authority.substring(5))  // Обрезаем "ROLE_"
+//                .map(authority -> authority.substring(5))  // Обрезаем "ROLE_"
                 .map(Role::valueOf)
                 .toList();
     }

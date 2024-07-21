@@ -24,7 +24,6 @@ public class AuthChecker {
      *                         сущности, идентификатор которой указан в {@code entityIdToEdit}
      * @return {@code true}, если текущий пользователь имеет права на редактирование сущности с указанным id
      *         {@code false}, если прав недостаточно
-     * @throws IllegalArgumentException Если {@code concreteRelatedEntityClass} не поддерживается
      *
      */
     public boolean hasPermissionToEdit(long entityIdToEdit,

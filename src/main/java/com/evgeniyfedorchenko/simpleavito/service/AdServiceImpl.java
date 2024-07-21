@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,25 +49,22 @@ public class AdServiceImpl implements AdService {
 
         adEntity.setPrice(properties.getPrice());
         adEntity.setTitle(properties.getTitle());
-        adEntity.setDescription(properties.getDescription());
-
-        List<AdEntity> ads = userEntity.getAds();
-        ads.add(adEntity);
-        userEntity.setAds(ads);
-        adEntity.setImageUuid(imageIdFuture.join());
+        adEntity.setImageCombinedId(imageIdFuture.join());
         adEntity.setAuthor(userEntity);
 
-        AdEntity saveAd = adRepository.save(adEntity);
-        UserEntity savedUser = userRepository.save(userEntity);
+        userEntity.getAds().add(adEntity);
+        adEntity.setDescription(properties.getDescription());
 
-        log.debug("Saved ad {} to user {}", saveAd, savedUser);
-        return adMapper.toDto(adEntity);
+        AdEntity savedAd = adRepository.save(adEntity);
+
+        log.debug("Saved ad {} to user {}", savedAd, userEntity);
+        return adMapper.toDto(savedAd);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<ExtendedAd> getAds(long id) {
-        return adRepository.findById(id).map(adMapper::toExtendedAdDto);
+        return adRepository.findById(id).map(adMapper::toExtendedDto);
     }
 
     @Override
@@ -81,7 +77,7 @@ public class AdServiceImpl implements AdService {
             return false;
         }
 
-        CompletableFuture.runAsync(() -> imageService.deleteImage(adEntityOpt.get().getImageUuid()));
+        CompletableFuture.runAsync(() -> imageService.deleteImage(adEntityOpt.get().getImageCombinedId()));
         CompletableFuture.runAsync(() -> adRepository.deleteById(id));
 
         log.debug("Removing ad {}", id);
@@ -121,6 +117,9 @@ public class AdServiceImpl implements AdService {
     @Transactional
     @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#id, @adRepository)")
     public Optional<byte[]> updateImage(long id, MultipartFile image) {
+
+        // TODO 19.07.2024 23:42: Можно через Optional.map()
+
         Optional<AdEntity> adEntityOpt = adRepository.findById(id);
 
         if (adEntityOpt.isEmpty()) {
@@ -129,8 +128,10 @@ public class AdServiceImpl implements AdService {
 
         CompletableFuture.runAsync(() -> {
             AdEntity adEntity = adEntityOpt.get();
-            String imageId = imageService.updateImage(adEntity.getImageUuid(), image);
-            adEntity.setImageUuid(imageId);
+            String imageId = adEntity.hasImage()
+                    ? imageService.updateImage(adEntity.getImageCombinedId(), image)
+                    : imageService.saveImage(image);
+            adEntity.setImageCombinedId(imageId);
             log.debug("Updated image of ad {}", adEntity);
             adRepository.save(adEntity);
         });
@@ -146,6 +147,6 @@ public class AdServiceImpl implements AdService {
     @Transactional(readOnly = true)
     public Optional<byte[]> getImage(long id) {
         return adRepository.findById(id)
-                .map(adEntity -> imageService.getImage(adEntity.getImageUuid()));
+                .map(adEntity -> imageService.getImage(adEntity.getImageCombinedId()));
     }
 }
