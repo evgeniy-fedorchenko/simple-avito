@@ -1,6 +1,5 @@
 package com.evgeniyfedorchenko.simpleavito.entity;
 
-import com.evgeniyfedorchenko.simpleavito.dto.Role;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
