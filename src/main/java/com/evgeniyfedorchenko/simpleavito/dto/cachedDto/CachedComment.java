@@ -1,6 +1,5 @@
 package com.evgeniyfedorchenko.simpleavito.dto.cachedDto;
 
-import com.evgeniyfedorchenko.simpleavito.entity.AdEntity;
 import com.evgeniyfedorchenko.simpleavito.entity.Role;
 import lombok.Data;
 import lombok.ToString;
@@ -12,7 +11,6 @@ public class CachedComment {
 
 //    Поля самого комментария
     private long id;
-    private AdEntity ad;
     private Instant createdAt;
     private String text;
 
