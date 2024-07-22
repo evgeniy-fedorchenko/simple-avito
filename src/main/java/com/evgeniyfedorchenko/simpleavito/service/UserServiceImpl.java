@@ -4,7 +4,6 @@ import com.evgeniyfedorchenko.simpleavito.dto.NewPassword;
 import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
 import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
-import com.evgeniyfedorchenko.simpleavito.exception.ImageParsedException;
 import com.evgeniyfedorchenko.simpleavito.mapper.UserMapper;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -25,13 +25,14 @@ public class UserServiceImpl implements UserService {
     private final AuthService authService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
     @Override
     @Transactional
     public boolean setPassword(NewPassword newPassword) {
         UserEntity userEntity = userRepository.findByEmail(authService.getUsername());
 
-        if (passwordEncoder.matches(newPassword.getCurrentPassword(), userEntity.getPassword())) {
+        if (!passwordEncoder.matches(newPassword.getCurrentPassword(), userEntity.getPassword())) {
             throw new IllegalArgumentException("Invalid current password");
         }
         userEntity.setPassword(passwordEncoder.encode(newPassword.getNewPassword()));
@@ -64,16 +65,24 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateUserImage(MultipartFile image) {
+
         UserEntity userEntity = userRepository.findByEmail(authService.getUsername());
 
-        try {
-            userEntity.setImage(image.getBytes());
-            UserEntity savedUser = userRepository.save(userEntity);
-            log.debug("Updated image of user {}", savedUser);
-            return true;
+        return CompletableFuture.runAsync(() -> {
 
-        } catch (IOException _) {
-            throw new ImageParsedException("Image could not be parsed");
-        }
+            String imageId = userEntity.hasImage()
+                    ? imageService.updateImage(userEntity.getImageCombinedId(), image)
+                    : imageService.saveImage(image);
+            userEntity.setImageCombinedId(imageId);
+            log.debug("Updated image of user {}", userEntity);
+            userRepository.save(userEntity);
+
+        }).handle((_, exception) -> exception == null).join();
+    }
+
+    @Override
+    public Optional<byte[]> getImage(long id) {
+        return userRepository.findById(id)
+                .map(userEntity -> imageService.getImage(userEntity.getImageCombinedId()));
     }
 }

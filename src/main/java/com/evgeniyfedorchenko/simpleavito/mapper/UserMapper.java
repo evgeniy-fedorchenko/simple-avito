@@ -5,58 +5,57 @@ import com.evgeniyfedorchenko.simpleavito.dto.Register;
 import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import jakarta.annotation.Nullable;
-import lombok.AllArgsConstructor;
+import lombok.Setter;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 
-@Component
-@AllArgsConstructor
-public class UserMapper {
+@Mapper(
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        imports = UserController.class,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+)
+@Setter
+public abstract class UserMapper {
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
-    public User toDto(UserEntity userEntity) {
-        User user = new User();
 
-        user.setId(userEntity.getId());
-        user.setEmail(userEntity.getEmail());
-        user.setFirstName(userEntity.getFirstName());
-        user.setLastName(userEntity.getLastName());
-        user.setPhone(userEntity.getPhone());
-        user.setRole(userEntity.getRole());
+    @Mapping(target = "email", source = "username")
+    @Mapping(target = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "imageCombinedId", ignore = true)
+    @Mapping(target = "ads", ignore = true)
+    public abstract UserEntity fromRegister(Register register);
 
-        user.setImage(userEntity.hasImage()
-                ? generateImageUrl(userEntity.getId(), UserController.IMAGE_PATH_SEGMENT)
-                : null
-        );
+    @Mapping(target = "image", expression = "java(this.generateImageUrl(userEntity))")
+    public abstract User toDto(UserEntity userEntity);
 
-        return user;
+    @Named("encodePassword")
+    String encodePassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
-    public UserEntity fromRegister(Register register) {
-        UserEntity userEntity = new UserEntity();
-
-        userEntity.setEmail(register.getUsername());
-        userEntity.setFirstName(register.getFirstName());
-        userEntity.setLastName(register.getLastName());
-        userEntity.setPhone(register.getPhone());
-        userEntity.setRole(register.getRole());
-        userEntity.setPassword(passwordEncoder.encode(register.getPassword()));
-
-        return userEntity;
+    @Named("generateImageUrl")
+    String generateImageUrl(UserEntity userEntity) {
+        return this.generateImageUrl(userEntity, UserController.IMAGE_PATH_SEGMENT);
     }
 
-    protected String generateImageUrl(long id, @Nullable String... pathSegments) {
-
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance().pathSegment(String.valueOf(id));
+    private @Nullable String generateImageUrl(UserEntity userEntity, String... pathSegments) {
+        if (!userEntity.hasImage()) {
+            return null;
+        }
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance()
+                .path(UserController.BASE_USER_URI)
+                .pathSegment(String.valueOf(userEntity.getId()));
         if (pathSegments != null) {
             Arrays.stream(pathSegments).forEach(uriComponentsBuilder::pathSegment);
         }
         return uriComponentsBuilder.build().toUriString();
-
     }
 
 }

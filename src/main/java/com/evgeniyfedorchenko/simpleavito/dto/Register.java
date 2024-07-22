@@ -1,5 +1,6 @@
 package com.evgeniyfedorchenko.simpleavito.dto;
 
+import com.evgeniyfedorchenko.simpleavito.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

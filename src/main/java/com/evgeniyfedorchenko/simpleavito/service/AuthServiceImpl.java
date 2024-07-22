@@ -1,7 +1,7 @@
 package com.evgeniyfedorchenko.simpleavito.service;
 
 import com.evgeniyfedorchenko.simpleavito.dto.Register;
-import com.evgeniyfedorchenko.simpleavito.dto.Role;
+import com.evgeniyfedorchenko.simpleavito.entity.Role;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import com.evgeniyfedorchenko.simpleavito.mapper.UserMapper;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
@@ -13,9 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
+@CrossOrigin(origins = "localhost:3000")
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -40,12 +42,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean register(Register register) {
 
-        try {
-            manager.loadUserByUsername(register.getUsername());
+        if (userRepository.findByEmail(register.getUsername()) != null) {
             return false;
-        } catch (UsernameNotFoundException _) {
-//            User doesn't exist, we can create a new one
         }
+
         UserEntity userEntity = userMapper.fromRegister(register);
         userRepository.save(userEntity);
         return true;
@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
     public List<Role> getRoles() {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(authority -> authority.substring(5))  // Обрезаем "ROLE_"
+//                .map(authority -> authority.substring(5))  // Обрезаем "ROLE_"
                 .map(Role::valueOf)
                 .toList();
     }

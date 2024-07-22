@@ -16,6 +16,10 @@
 
         <comment>Create table 'users' for entity 'UserEntity'</comment>
 
+        <sql>
+            CREATE TYPE public.role AS ENUM ('ADMIN', 'USER');
+        </sql>
+
         <createTable tableName="users">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -32,7 +36,7 @@
             <column name="phone" type="varchar(17)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role" type="varchar(20)">
+            <column name="role" type="role">
                 <constraints nullable="false"/>
             </column>
 
@@ -41,7 +45,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="image" type="oid">
+            <column name="image_combined_id" type="varchar(128)">
                 <constraints nullable="true"/>
             </column>
         </createTable>
@@ -52,7 +56,6 @@
             ALTER TABLE users ADD CONSTRAINT first_name_min_len CHECK (length(first_name) >= 2);
             ALTER TABLE users ADD CONSTRAINT last_name_min_len CHECK (length(last_name) >= 2);
             ALTER TABLE users ADD CONSTRAINT phone_pattern CHECK (phone ~ '^\+7\s?\(?\d{3}\)?\s?\d{3}-?\d{2}-?\d{2}$');
-            ALTER TABLE users ADD CONSTRAINT role_values CHECK (role IN ('ADMIN', 'USER'));
             ALTER TABLE users ADD CONSTRAINT enc_pass_min_len CHECK (length(password) >= 60);
         </sql>
 

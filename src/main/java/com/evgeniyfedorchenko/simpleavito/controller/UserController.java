@@ -5,6 +5,7 @@ import com.evgeniyfedorchenko.simpleavito.dto.UpdateUser;
 import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @Validated
 @RestController
 @RequestMapping(path = UserController.BASE_USER_URI)
@@ -42,4 +44,8 @@ public class UserController {
         return userService.updateUserImage(image) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
+    @GetMapping(path = "/{id}/image", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@PathVariable @Positive long id) {
+        return ResponseEntity.of(userService.getImage(id));
+    }
 }

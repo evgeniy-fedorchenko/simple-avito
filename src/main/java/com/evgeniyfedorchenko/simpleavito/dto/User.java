@@ -1,5 +1,6 @@
 package com.evgeniyfedorchenko.simpleavito.dto;
 
+import com.evgeniyfedorchenko.simpleavito.entity.Role;
 import lombok.Data;
 
 @Data

@@ -26,7 +26,7 @@
             <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="image" type="oid">
+            <column name="image_combined_id" type="varchar(128)">
                 <constraints nullable="true"/>
             </column>
             <column name="price" type="int">
@@ -41,7 +41,6 @@
         </createTable>
 
         <sql>
-            ALTER TABLE ads ADD CONSTRAINT user_id_min CHECK (user_id > 0);
             ALTER TABLE ads ADD CONSTRAINT price_bounds CHECK (price >= 0 AND 1000000 >= price);
             ALTER TABLE ads ADD CONSTRAINT title_min_len CHECK (length(title) >= 4);
             ALTER TABLE ads ADD CONSTRAINT description_min_len CHECK (length(description) >= 8);
