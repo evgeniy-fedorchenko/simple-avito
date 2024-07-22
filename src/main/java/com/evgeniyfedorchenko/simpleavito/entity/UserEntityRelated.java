@@ -12,7 +12,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
 @MappedSuperclass
-public abstract class UserEntityRelated {
+public abstract sealed class UserEntityRelated permits AdEntity, CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

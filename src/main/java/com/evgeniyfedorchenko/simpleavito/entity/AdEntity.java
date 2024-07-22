@@ -15,7 +15,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @Entity
 @Table(name = "ads")
-public class AdEntity extends UserEntityRelated {
+public final class AdEntity extends UserEntityRelated {
 
     @Nullable
     private String imageCombinedId;

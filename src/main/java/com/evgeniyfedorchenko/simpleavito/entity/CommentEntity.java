@@ -16,7 +16,7 @@ import java.time.Instant;
 @ToString(callSuper = true)
 @Entity
 @Table(name = "comments")
-public class CommentEntity extends UserEntityRelated {
+public final class CommentEntity extends UserEntityRelated {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "ad_id")
