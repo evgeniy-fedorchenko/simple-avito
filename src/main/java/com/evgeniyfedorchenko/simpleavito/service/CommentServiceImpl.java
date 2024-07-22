@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public Optional<Comments> getComments(long adId) {
-        return Optional.of(commentMapper.toDtos(commentRepository.findByAdId(adId)));
+        return Optional.of(commentMapper.toDtos(adRepository.findById(adId).orElseThrow().getComments()));
     }
 
     @Override

@@ -5,27 +5,25 @@ import com.evgeniyfedorchenko.simpleavito.dto.Register;
 import com.evgeniyfedorchenko.simpleavito.dto.User;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import jakarta.annotation.Nullable;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 
-@Component
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         imports = UserController.class,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-@NoArgsConstructor  // Такой набор аннотаций чисто для теста, чтобы все разрешить и не париться. Потом конечно это уберу и оставлю минимум
-@Data
+@Setter
 public abstract class UserMapper {
 
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
-    private PasswordEncoder passwordEncoder;
 
     @Mapping(target = "email", source = "username")
     @Mapping(target = "password", qualifiedByName = "encodePassword")

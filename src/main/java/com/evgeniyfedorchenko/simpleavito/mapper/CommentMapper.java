@@ -5,30 +5,31 @@ import com.evgeniyfedorchenko.simpleavito.dto.Comment;
 import com.evgeniyfedorchenko.simpleavito.dto.Comments;
 import com.evgeniyfedorchenko.simpleavito.dto.cachedDto.CachedComment;
 import com.evgeniyfedorchenko.simpleavito.entity.CommentEntity;
-import lombok.Data;
+import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
+import jakarta.annotation.Nullable;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.mapstruct.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
-        imports = {UserMapper.class, UserController.class},
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
-        uses = UserMapper.class
+        imports = UserController.class,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
-@NoArgsConstructor  // Такой набор аннотаций чисто для теста, чтобы все разрешить и не париться. Потом конечно это уберу и оставлю минимум
-@Data
+@Setter
+@NoArgsConstructor
 public abstract class CommentMapper {
-
-    public UserMapper userMapper;
 
     @Mapping(target = "author", source = "id")
     @Mapping(target = "authorFirstName", source = "author.firstName")
     @Mapping(target = "createdAt", expression = "java(commentEntity.getCreatedAt().toEpochMilli())")
     @Mapping(target = "pk", source = "id")
-    @Mapping(target = "authorImage", expression = "java(userMapper.generateImageUrl(commentEntity.getAuthor()))")
+    @Mapping(target = "authorImage", expression = "java(this.generateImageUrlForComment(commentEntity))")
     public abstract Comment toDto(CommentEntity commentEntity);
 
     public Comments toDtos(List<CommentEntity> commentEntities) {
@@ -56,23 +57,21 @@ public abstract class CommentMapper {
     @InheritInverseConfiguration
     public abstract CommentEntity cachedCommentToCommentEntity(CachedComment cachedComment);
 
+    String generateImageUrlForComment(CommentEntity commentEntity) {
+        UserEntity author = commentEntity.getAuthor();
+        return this.generateImageUrl(author, UserController.IMAGE_PATH_SEGMENT);
+    }
 
-    /**
-     * Временный фикс заключается в том, чтобы продублировать метод, который генерит ссылку на фотку в этот маппер
-     * и вызывать его. Тогда не нужно выполнять инжект UserMapper.
-     * Таким образом удается запустить код
-     */
-//    default @Nullable String generateImageUrl(UserEntity userEntity, String... pathSegments) {
-//        if (!userEntity.hasImage()) {
-//            return null;
-//        }
-//        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance()
-//                .path(UserController.BASE_USER_URI)
-//                .pathSegment(String.valueOf(userEntity.getId()));
-//        if (pathSegments != null) {
-//            Arrays.stream(pathSegments).forEach(uriComponentsBuilder::pathSegment);
-//        }
-//        return uriComponentsBuilder.build().toUriString();
-//    }
-
+    private @Nullable String generateImageUrl(UserEntity userEntity, String... pathSegments) {
+        if (!userEntity.hasImage()) {
+            return null;
+        }
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.newInstance()
+                .path(UserController.BASE_USER_URI)
+                .pathSegment(String.valueOf(userEntity.getId()));
+        if (pathSegments != null) {
+            Arrays.stream(pathSegments).forEach(uriComponentsBuilder::pathSegment);
+        }
+        return uriComponentsBuilder.build().toUriString();
+    }
 }

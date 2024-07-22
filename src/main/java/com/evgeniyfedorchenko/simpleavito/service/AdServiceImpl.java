@@ -39,7 +39,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    @Transactional // TODO 18.07.2024 22:52: авторизован ли пользователь?
+    @Transactional
     public Ad addAd(CreateOrUpdateAd properties, MultipartFile image) {
 
         AdEntity adEntity = new AdEntity();
