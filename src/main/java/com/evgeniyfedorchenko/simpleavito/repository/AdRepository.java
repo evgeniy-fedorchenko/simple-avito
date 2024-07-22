@@ -16,5 +16,5 @@ public interface AdRepository extends JpaRepository<AdEntity, Long> {
     <S extends AdEntity> S save(@NotNull S entity);
 
     @Override
-    void delete(@NotNull AdEntity entity);
+    void deleteById(@NotNull Long aLong);
 }
