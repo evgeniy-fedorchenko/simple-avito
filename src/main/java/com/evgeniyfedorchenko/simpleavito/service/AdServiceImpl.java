@@ -6,7 +6,6 @@ import com.evgeniyfedorchenko.simpleavito.dto.CreateOrUpdateAd;
 import com.evgeniyfedorchenko.simpleavito.dto.ExtendedAd;
 import com.evgeniyfedorchenko.simpleavito.entity.AdEntity;
 import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
-import com.evgeniyfedorchenko.simpleavito.exception.ImageParsedException;
 import com.evgeniyfedorchenko.simpleavito.mapper.AdMapper;
 import com.evgeniyfedorchenko.simpleavito.repository.AdRepository;
 import com.evgeniyfedorchenko.simpleavito.repository.UserRepository;
@@ -106,6 +105,7 @@ public class AdServiceImpl implements AdService {
 
     }
 
+    // TODO 23.07.2024 01:32: Пересмотреть метод
     @Override
     @Transactional(readOnly = true)
     public Optional<Ads> getAdsMe() {
@@ -118,29 +118,18 @@ public class AdServiceImpl implements AdService {
     @PreAuthorize(value = "@authChecker.hasPermissionToEdit(#id, @adRepository)")
     public Optional<byte[]> updateImage(long id, MultipartFile image) {
 
-        // TODO 19.07.2024 23:42: Можно через Optional.map()
+        return adRepository.findById(id).map(adEntity -> {
 
-        Optional<AdEntity> adEntityOpt = adRepository.findById(id);
-
-        if (adEntityOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        CompletableFuture.runAsync(() -> {
-            AdEntity adEntity = adEntityOpt.get();
-            String imageId = adEntity.hasImage()
-                    ? imageService.updateImage(adEntity.getImageCombinedId(), image)
-                    : imageService.saveImage(image);
-            adEntity.setImageCombinedId(imageId);
-            log.debug("Updated image of ad {}", adEntity);
-            adRepository.save(adEntity);
+            CompletableFuture.runAsync(() -> {
+                String imageId = adEntity.hasImage()
+                        ? imageService.updateImage(adEntity.getImageCombinedId(), image)
+                        : imageService.saveImage(image);
+                adEntity.setImageCombinedId(imageId);
+                log.debug("Updated image of ad {}", adEntity);
+                adRepository.save(adEntity);
+            });
+            return this.getBytesSafety(image);
         });
-
-        try {
-            return Optional.of(image.getBytes());
-        } catch (IOException e) {
-            throw new ImageParsedException("Image could not be parsed");
-        }
     }
 
     @Override
@@ -148,5 +137,14 @@ public class AdServiceImpl implements AdService {
     public Optional<byte[]> getImage(long id) {
         return adRepository.findById(id)
                 .map(adEntity -> imageService.getImage(adEntity.getImageCombinedId()));
+    }
+
+    private byte[] getBytesSafety(MultipartFile image) {
+        try {
+            return image.getBytes();
+        } catch (IOException ex) {
+            log.error("Cannot get bytes from MultipartFile, filename: {}. Ex:{}", ex.getMessage(), image.getOriginalFilename());
+            return new byte[0];
+        }
     }
 }
