@@ -1,11 +1,19 @@
 package com.evgeniyfedorchenko.simpleavito.dto.cachedDto;
 
+import com.evgeniyfedorchenko.simpleavito.entity.AdEntity;
+import com.evgeniyfedorchenko.simpleavito.entity.CommentEntity;
 import com.evgeniyfedorchenko.simpleavito.entity.Role;
+import com.evgeniyfedorchenko.simpleavito.entity.UserEntity;
 import lombok.Data;
 import lombok.ToString;
 
 import java.time.Instant;
 
+/**
+ * Объекты этого класса предназначены для кеширования сущности {@link CommentEntity}.
+ * Имеются поля связанных сущностей {@link UserEntity} и {@link AdEntity} на один уровень связи вниз.
+ * То есть только базовые поля, не представленные другими сущностями или сборными объектами
+ */
 @Data
 public class CachedComment {
 

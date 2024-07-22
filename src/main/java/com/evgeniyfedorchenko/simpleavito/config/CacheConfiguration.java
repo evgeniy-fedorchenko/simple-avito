@@ -31,11 +31,26 @@ public class CacheConfiguration {
     public static final String AD_CACHE = "redis_cache_for_adEntity";
     public static final String COMMENT_CACHE = "redis_cache_for_commentEntity";
 
+    /**
+     * Карта сопоставления конкретного кеш-хранилища и класса репозитория, чьи значения (их дто) хранятся в кеше<br>
+     * {@code key} - конкретный класс репозитория<br>
+     * {@code value} - имя связанного с ним кеша
+     */
     public static final Map<Class<? extends JpaRepository<?, Long>>, String> cacheRepoMapping = Map.of(
             AdRepository.class, AD_CACHE,
             CommentRepository.class, COMMENT_CACHE
     );
 
+    /**
+     * Конфигурация кеш-провайдера. Реализация {@link RedisCacheManager}. Под управлением менеджера находятся
+     * два кеша - {@link CacheConfiguration#AD_CACHE} и {@link CacheConfiguration#COMMENT_CACHE}, хранящие объекты
+     * {@link CachedAd} и {@link CachedComment} соответственно<br>
+     * <lu>
+     *     <li><b>Time to live</b> установлен на вечное хранение. Необходимо обеспечить удаление ключей и поддержку
+     *                             согласованности с соответствующими значениями в БД</li>
+     *     <li><b>Null значения</b> не допустимы в качестве ключей</li>
+     * </lu>
+     */
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 

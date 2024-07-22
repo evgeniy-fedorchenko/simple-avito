@@ -7,6 +7,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 
+/**
+ * Класс, представляющий собой сущность, которой может владеть пользователь (объект {@link UserEntity})
+ * Наследование строго контролируется с помощью модификаторов {@code sealed} и {@code permits}
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
